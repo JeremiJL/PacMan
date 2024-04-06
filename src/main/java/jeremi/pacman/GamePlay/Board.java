@@ -69,6 +69,7 @@ public class Board extends JTable implements Runnable {
     //PassWallsPower
     private boolean informBoxes = false;
 
+
     //Game stats
     private GameStats stats;
 
@@ -146,11 +147,17 @@ public class Board extends JTable implements Runnable {
 
     private void generateBoard(){
 
+        //--Creating staticFigData table before dynamic one
+        this.staticFigData = new BoardFigure[boardSize][boardSize];
+
+        //Create box pattern for 10x10 board or a random one for greater ones
+        generateMaze();
+
+        //Create some randomly spread coins on game board
+        generateCoins(coinsToCollect);
+
         //--Creating dynamicFigData table
         this.dynamicFigData = new BoardFigure[boardSize][boardSize];
-
-        //--Creating staticFigData table
-        this.staticFigData = new BoardFigure[boardSize][boardSize];
 
         //creates new player
         this.player = new Player(this, 0,0);
@@ -166,13 +173,6 @@ public class Board extends JTable implements Runnable {
         this.blinky = new Blinky(this,boardSize-1,boardSize-1);
         dynamicFigData[blinky.getYPos()][blinky.getXPos()] = blinky;
 
-
-
-        //Create box pattern for 10x10 board or a random one for greater ones
-        generateMaze();
-
-        //Create some randomly spread coins on game board
-        generateCoins(coinsToCollect);
 
     }
 
@@ -285,7 +285,6 @@ public class Board extends JTable implements Runnable {
                 staticFigData[row][col] = new Box(col,row);
 
             }
-
         }
 
         //Next carve a net
@@ -296,7 +295,6 @@ public class Board extends JTable implements Runnable {
                 staticFigData[col][row] = null;
             }
         }
-
 
         //Next carve out a path horizontally 1st time
         carvePath(boardSize/2, 0);
@@ -701,6 +699,7 @@ public class Board extends JTable implements Runnable {
         //Disable cell selection
         this.setCellSelectionEnabled(false);
 
+
         //Draw lines, I think they look cool
         this.showHorizontalLines = true;
         this.showVerticalLines = true;
@@ -789,11 +788,11 @@ public class Board extends JTable implements Runnable {
         this.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                System.out.println(
-                        "--------------------------------\n"+
-                        "row : " + getSelectedRow() + "\n" +
-                        "column : " + getSelectedColumn()
-                );
+//                System.out.println(
+//                        "--------------------------------\n"+
+//                        "row : " + getSelectedRow() + "\n" +
+//                        "column : " + getSelectedColumn()
+//                );
             }
 
             @Override
@@ -808,6 +807,13 @@ public class Board extends JTable implements Runnable {
 
             @Override
             public void mouseEntered(MouseEvent e) {
+
+//                for (BoardFigure[] row : dynamicFigData){
+//                    for (BoardFigure fig : row){
+//                        System.out.print((fig == null) ? "none " : fig.toString() + " ");
+//                    }
+//                    System.out.print("\n");
+//                }
 
             }
 
@@ -840,5 +846,25 @@ public class Board extends JTable implements Runnable {
 
     public void setInformBoxes(boolean informBoxes) {
         this.informBoxes = informBoxes;
+    }
+
+    public BoardFigure[][] getStaticFigData() {
+        return staticFigData;
+    }
+
+    public BoardFigure[][] getDynamicFigData() {
+        return dynamicFigData;
+    }
+
+    public int getBoardSize() {
+        return boardSize;
+    }
+
+    public int getPacManX() {
+        return this.player.getXPos();
+    }
+
+    public int getPacManY() {
+        return this.player.getYPos();
     }
 }

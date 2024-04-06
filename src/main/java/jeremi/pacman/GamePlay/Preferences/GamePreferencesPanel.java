@@ -1,6 +1,7 @@
-package jeremi.pacman.GamePlay;
+package jeremi.pacman.GamePlay.Preferences;
 
 import jeremi.pacman.AbstractContentPanel;
+import jeremi.pacman.GamePlay.GamePlayWindow;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;

@@ -1,4 +1,4 @@
-package jeremi.pacman.GamePlay;
+package jeremi.pacman.GamePlay.Multiplayer;
 
 import jeremi.pacman.AbstractContentPanel;
 
@@ -8,12 +8,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class MultiplayerPreferencesPanel extends AbstractContentPanel {
-
-    //Host
-    HostSide hostSide;
-
-    //Client
-    ClientSide clientSide;
 
     //Buttons
     private JButton buttonHost;
@@ -58,12 +52,7 @@ public class MultiplayerPreferencesPanel extends AbstractContentPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                hostSide = new HostSide();
 
-                String title = "Hosting information";
-                String message = "You are currently in hosting-enabled state under the IP: " + hostSide.getAddress();
-
-                JOptionPane.showMessageDialog(window,message,title,JOptionPane.INFORMATION_MESSAGE);
 
             }
         });
@@ -75,17 +64,6 @@ public class MultiplayerPreferencesPanel extends AbstractContentPanel {
             public void actionPerformed(ActionEvent e) {
 
 
-
-                String title = "Find your host";
-                String message = "Type host IP address";
-                String defaultMessage = "Your host IP";
-
-                Object[] possibilities = {"ham", "spam", "yam"};
-                String s = (String)JOptionPane.showInputDialog(window,message,defaultMessage);
-
-                System.out.println(s);
-
-                clientSide = new ClientSide(s);
 
             }
         });

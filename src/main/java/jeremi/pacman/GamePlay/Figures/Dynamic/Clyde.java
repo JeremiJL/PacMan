@@ -86,6 +86,11 @@ public class Clyde extends Ghost {
 
     }
 
+    @Override
+    public String toString() {
+        return "Clyde";
+    }
+
     private void accelerateMovementSpeed(int value){
 
         if (currentMovementSpeed > 100){

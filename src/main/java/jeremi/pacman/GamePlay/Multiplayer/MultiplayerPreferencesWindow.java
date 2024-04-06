@@ -1,4 +1,4 @@
-package jeremi.pacman.GamePlay;
+package jeremi.pacman.GamePlay.Multiplayer;
 
 import jeremi.pacman.AbstractWindow;
 

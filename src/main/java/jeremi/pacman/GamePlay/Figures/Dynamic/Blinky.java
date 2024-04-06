@@ -59,6 +59,7 @@ public class Blinky extends Ghost {
     }
 
     //Moving in random directions
+
     protected void move(){
 
         if(movementActive){
@@ -85,7 +86,6 @@ public class Blinky extends Ghost {
         }
 
     }
-
     private void randomChangeOfMovementSpeed(){
 
         int random = (int)(Math.random()*350);
@@ -94,12 +94,17 @@ public class Blinky extends Ghost {
 
     }
 
+    @Override
+    public String toString() {
+        return "Blinky";
+    }
+
     //Class responsible for generating new power ups on board
     public class BlinkyPowerUpProduction implements Runnable{
 
+
         //FREQUENCY OF GENERATING NEW POWER UPS
         private final int POWER_UP_DELAY = 5_000; //ms
-
 
         public BlinkyPowerUpProduction() {
 
@@ -119,6 +124,8 @@ public class Blinky extends Ghost {
 
             return false;
         }
+
+
 
         @Override
         public void run() {

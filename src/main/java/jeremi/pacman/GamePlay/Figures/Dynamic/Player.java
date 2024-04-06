@@ -71,7 +71,11 @@ public class Player extends Character {
             }
         }
 
+    }
 
+    @Override
+    public String toString() {
+        return "PacMan";
     }
 
     //Sets character image (ImageIcon)
@@ -106,7 +110,7 @@ public class Player extends Character {
 
             //test - acceleration
 
-                System.out.println(getMTI());
+
 
                 if((GO_X != 0 || GO_Y != 0 ) && getMTI() > (defaultSpeed - 20) ){
                     setMTI(getMTI() - 1);
@@ -240,8 +244,6 @@ public class Player extends Character {
 
         @Override
         public void keyPressed(KeyEvent e) {
-
-            System.out.println(Constants.KEY_CODES.UP.codeValue);
 
             int key = e.getKeyCode();
 

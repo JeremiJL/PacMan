@@ -1,8 +1,11 @@
 package jeremi.pacman.GamePlay.Figures.Dynamic;
 
 import jeremi.pacman.GamePlay.Board;
+import jeremi.pacman.GamePlay.Figures.BoardFigure;
 
 import javax.swing.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Pinky extends Ghost {
 
@@ -17,9 +20,6 @@ public class Pinky extends Ghost {
     private boolean movementActive;
 
     //Movement
-    private int shiftX = 0;
-    private int shiftY = 0;
-    private int randomVal = 0;
 
     //Default movement speed
     private int defaultMovementSpeed = 800;
@@ -39,10 +39,18 @@ public class Pinky extends Ghost {
         //Starting Animation Thread
         this.animationThread = new Thread(this.pinkyAnimator);
         this.animationThread.start();
+
+        //Movement logic
+        computeAdjecencyList();
     }
 
     public void setMovementActive(boolean movementActive) {
         this.movementActive = movementActive;
+    }
+
+    @Override
+    public String toString() {
+        return "Pinky";
     }
 
     //Moving in random directions
@@ -50,26 +58,92 @@ public class Pinky extends Ghost {
 
         if(movementActive){
 
-            shiftX = 0;
-            shiftY = 0;
-
-            randomVal = (int)(Math.random()*4);
-
-            switch(randomVal){
-                case 0 -> shiftX++;
-                case 1 -> shiftY++;
-                case 2 -> shiftX--;
-                case 3 -> shiftY--;
-            }
-
-            int newX = getXPos() + shiftX;
-            int newY = getYPos() + shiftY;
+            int newX = getXPos();
+            int newY = getYPos();
 
             board.moveGhost(this,newX,newY);
 
         }
 
     }
+
+    protected void computeAdjecencyList(){
+
+        List<Square> squaresList = new ArrayList<>();
+
+        int size = this.board.getBoardSize();
+
+        //Add squares to list
+        for (int row = 0; row < size; row++){
+            for (int el = 0; el < size; el++){
+                squaresList.add(new Square(el,row));
+            }
+        }
+
+        //Set neighbours
+        for (int row = 0; row < size; row++){
+            for (int el = 0; el < size; el++){
+
+                //Select square for neighbour update
+                Square squareForUpdate = squaresList.get(row * size + el);
+                //Add neighbours only if this square corresponds to empty space
+                if (this.board.getStaticFigData()[row][el] == null) {
+                    //Add neighbour from east
+                    if (el + 1 < size && this.board.getStaticFigData()[row][el + 1] == null){
+                        Square easternNeighbour = squaresList.get(row + el + 1);
+                        squareForUpdate.addNeighbour(easternNeighbour);
+                    }
+                }
+            }
+        }
+
+        testAdjacency(squaresList);
+
+        for (BoardFigure[] row : this.board.getStaticFigData()){
+            for (BoardFigure fig : row){
+                if (fig == null)
+                    System.out.print("null ");
+                else
+                    System.out.print("elem ");
+            }
+            System.out.print("\n");
+        }
+    }
+
+
+
+
+    class Square {
+
+        public final int x;
+        public final int y;
+        private List<Square> neighbours;
+
+        public Square(int x, int y) {
+            this.x = x;
+            this.y = y;
+            neighbours = new ArrayList<>();
+        }
+
+        public void addNeighbour(Square sqr){
+            neighbours.add(sqr);
+        }
+
+        @Override
+        public String toString() {
+            return "x:" + this.x + " y:" + this.y;
+        }
+    }
+
+    private void testAdjacency(List<Square> list){
+        for (Square square : list){
+            System.out.print(square.toString() + " neighbours: ");
+            square.neighbours.forEach(System.out::print);
+            System.out.print("\n");
+        }
+    }
+
+
 
     public class PinkyAnimator implements Runnable {
 
@@ -137,15 +211,8 @@ public class Pinky extends Ghost {
 
             //Animation in the loop
             while (true) {
-
                 animate(myState.framesTab);
-
             }
-
         }
-
-
     }
-
-
 }

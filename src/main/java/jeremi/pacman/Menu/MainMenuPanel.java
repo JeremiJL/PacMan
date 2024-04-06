@@ -2,8 +2,8 @@ package jeremi.pacman.Menu;
 
 import jeremi.pacman.AbstractContentPanel;
 import jeremi.pacman.Constants;
-import jeremi.pacman.GamePlay.GamePreferencesWindow;
-import jeremi.pacman.GamePlay.MultiplayerPreferencesWindow;
+import jeremi.pacman.GamePlay.Preferences.GamePreferencesWindow;
+import jeremi.pacman.GamePlay.Multiplayer.MultiplayerPreferencesWindow;
 import jeremi.pacman.HighScore.HighScoreWindow;
 import jeremi.pacman.Options.OptionsWindow;
 
@@ -48,14 +48,18 @@ public class MainMenuPanel extends AbstractContentPanel {
         this.buttonNewGame.setFont(Constants.getFont(Constants.FONT_TYPE.MEDIUM_FONT));
         this.panelAttributes.add(buttonNewGame);
 
-        //New Game button
+        //Multiplayer button
         this.buttonMultiPlayer = new JButton("MULTIPLAYER");
         this.buttonMultiPlayer.setFont(Constants.getFont(Constants.FONT_TYPE.MEDIUM_FONT));
+        //As multiplayer gameplay is still not implemented this button is disabled
+        this.buttonMultiPlayer.setEnabled(false);
         this.panelAttributes.add(buttonMultiPlayer);
 
         //HighScores button
         this.buttonScores = new JButton("HIGH SCORES");
         this.buttonScores.setFont(Constants.getFont(Constants.FONT_TYPE.MEDIUM_FONT));
+        //As high-scores is still not implemented this button is disabled
+        this.buttonScores.setEnabled(false);
         this.panelAttributes.add(buttonScores);
 
         //Options button
