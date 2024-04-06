@@ -36,9 +36,9 @@ public class Blinky extends Ghost {
         super(board, xPos, yPos,DEFAULT_IMAGE);
 
         //As default
-        this.movementActive = true;
+        this.movementActive = false;
 
-        //Movement speed of clyde
+        //Movement speed of blinky
         setMTI(defaultMovementSpeed);
 
         //Assignment of Blinky Animator class

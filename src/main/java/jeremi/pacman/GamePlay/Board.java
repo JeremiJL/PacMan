@@ -184,7 +184,6 @@ public class Board extends JTable implements Runnable {
         this.blinky = new Blinky(this,boardSize-1,boardSize-1);
         dynamicFigData[blinky.getYPos()][blinky.getXPos()] = blinky;
 
-
     }
 
     private void newLevel(){

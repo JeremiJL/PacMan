@@ -5,7 +5,9 @@ import jeremi.pacman.GamePlay.Tracker;
 import jeremi.pacman.GamePlay.Tracker.Square;
 
 import javax.swing.*;
+import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Stack;
 
 public class Pinky extends Ghost {
 
@@ -19,22 +21,23 @@ public class Pinky extends Ghost {
     //Enables / disables ghosts movement
     private boolean movementActive;
 
+    // Movement speed
+    private final int movementSpeed = 170;
+
     //Movement
+    private final PinkyTracking pinkyTracking;
 
     //Next sequence of moves
-    private Queue<Square> trail;
-
-    //Default movement speed
-    private int defaultMovementSpeed = 800;
+    private Queue<Square> trail = new LinkedList<>();
 
     public Pinky(Board board, int xPos, int yPos) {
         super(board, xPos, yPos,DEFAULT_IMAGE);
 
         //As default
-        this.movementActive = true;
+        this.movementActive = false;
 
-        //Movement speed of clyde
-        setMTI(defaultMovementSpeed);
+        //Set movement speed of pinky
+        setMTI(movementSpeed);
 
         //Assignment
         this.pinkyAnimator = new PinkyAnimator();
@@ -43,42 +46,61 @@ public class Pinky extends Ghost {
         this.animationThread = new Thread(this.pinkyAnimator);
         this.animationThread.start();
 
-        // Compute next moves
-        this.trail = Tracker.convertStackToQueue(board.getTracker().sniff(xPos,yPos,0,0));
-
-        //test
-        test();
+        //Start tracking thread
+        this.pinkyTracking = new PinkyTracking();
+        this.pinkyTracking.start();
     }
 
     public void setMovementActive(boolean movementActive) {
         this.movementActive = movementActive;
     }
 
-    @Override
-    public String toString() {
-        return "Pinky";
-    }
 
-    //Moving in random directions
+    //Moving along tracking algorithm
     protected void move(){
 
         if(movementActive){
 
-            int newX = getXPos();
-            int newY = getYPos();
+            if (!trail.isEmpty()){
+                Square square = trail.poll();
+                System.out.println(square);
+                int newX = square.x;
+                int newY = square.y;
 
-            board.moveGhost(this,newX,newY);
+                board.moveGhost(this,newX,newY);
+            }
         }
     }
 
+    class PinkyTracking extends Thread{
 
+        @Override
+        public void run() {
+            while(true) {
+                try {
 
-    private void test(){
-        while(!trail.isEmpty())
-            System.out.println(trail.poll());
+                    // Compute next moves if pinky can move
+                    if (movementActive && trail.isEmpty()){
+                        trail = Tracker.convertStackToQueue(board.getTracker().sniff(getXPos(), getYPos(), board.getPacManX(), board.getPacManY()));
+                    }
+                    // If pinky can not move clear the trail
+                    else {
+                        trail.clear();
+                    }
 
+                    Thread.sleep(2_500);
+
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
     }
 
+    @Override
+    public String toString() {
+        return "Pinky";
+    }
 
     public class PinkyAnimator implements Runnable {
 

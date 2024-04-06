@@ -133,6 +133,12 @@ public class Tracker {
         // create new queue
         Queue<T> queue = new LinkedList<>();
 
+        // revers order of stack
+        Stack<T> reversed = new Stack<>();
+        while(!stack.isEmpty())
+            reversed.push(stack.pop());
+        stack = reversed;
+
         //  fill queue
         while(!stack.isEmpty())
             queue.offer(stack.pop());
