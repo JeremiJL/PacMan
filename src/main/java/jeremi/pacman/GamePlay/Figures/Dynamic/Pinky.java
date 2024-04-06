@@ -1,11 +1,11 @@
 package jeremi.pacman.GamePlay.Figures.Dynamic;
 
 import jeremi.pacman.GamePlay.Board;
-import jeremi.pacman.GamePlay.Figures.BoardFigure;
+import jeremi.pacman.GamePlay.Tracker;
+import jeremi.pacman.GamePlay.Tracker.Square;
 
 import javax.swing.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Queue;
 
 public class Pinky extends Ghost {
 
@@ -20,6 +20,9 @@ public class Pinky extends Ghost {
     private boolean movementActive;
 
     //Movement
+
+    //Next sequence of moves
+    private Queue<Square> trail;
 
     //Default movement speed
     private int defaultMovementSpeed = 800;
@@ -40,8 +43,11 @@ public class Pinky extends Ghost {
         this.animationThread = new Thread(this.pinkyAnimator);
         this.animationThread.start();
 
-        //Movement logic
-        computeAdjecencyList();
+        // Compute next moves
+        this.trail = Tracker.convertStackToQueue(board.getTracker().sniff(xPos,yPos,0,0));
+
+        //test
+        test();
     }
 
     public void setMovementActive(boolean movementActive) {
@@ -62,84 +68,16 @@ public class Pinky extends Ghost {
             int newY = getYPos();
 
             board.moveGhost(this,newX,newY);
-
-        }
-
-    }
-
-    protected void computeAdjecencyList(){
-
-        List<Square> squaresList = new ArrayList<>();
-
-        int size = this.board.getBoardSize();
-
-        //Add squares to list
-        for (int row = 0; row < size; row++){
-            for (int el = 0; el < size; el++){
-                squaresList.add(new Square(el,row));
-            }
-        }
-
-        //Set neighbours
-        for (int row = 0; row < size; row++){
-            for (int el = 0; el < size; el++){
-
-                //Select square for neighbour update
-                Square squareForUpdate = squaresList.get(row * size + el);
-                //Add neighbours only if this square corresponds to empty space
-                if (this.board.getStaticFigData()[row][el] == null) {
-                    //Add neighbour from east
-                    if (el + 1 < size && this.board.getStaticFigData()[row][el + 1] == null){
-                        Square easternNeighbour = squaresList.get(row + el + 1);
-                        squareForUpdate.addNeighbour(easternNeighbour);
-                    }
-                }
-            }
-        }
-
-        testAdjacency(squaresList);
-
-        for (BoardFigure[] row : this.board.getStaticFigData()){
-            for (BoardFigure fig : row){
-                System.out.print(fig.getClass().getName());
-            }
-            System.out.print("\n");
         }
     }
 
 
 
+    private void test(){
+        while(!trail.isEmpty())
+            System.out.println(trail.poll());
 
-    class Square {
-
-        public final int x;
-        public final int y;
-        private List<Square> neighbours;
-
-        public Square(int x, int y) {
-            this.x = x;
-            this.y = y;
-            neighbours = new ArrayList<>();
-        }
-
-        public void addNeighbour(Square sqr){
-            neighbours.add(sqr);
-        }
-
-        @Override
-        public String toString() {
-            return "x:" + this.x + " y:" + this.y;
-        }
     }
-
-    private void testAdjacency(List<Square> list){
-        for (Square square : list){
-            System.out.print(square.toString() + " neighbours: ");
-            square.neighbours.forEach(System.out::print);
-            System.out.print("\n");
-        }
-    }
-
 
 
     public class PinkyAnimator implements Runnable {

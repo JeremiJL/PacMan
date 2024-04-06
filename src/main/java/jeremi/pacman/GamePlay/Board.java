@@ -8,8 +8,6 @@ import jeremi.pacman.GamePlay.Figures.Static.*;
 import jeremi.pacman.GamePlay.Figures.Static.Box;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableCellRenderer;
-import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
@@ -57,6 +55,9 @@ public class Board extends JTable implements Runnable {
     private Pinky pinky;
     private Clyde clyde;
     private Blinky blinky;
+
+    //Tracker
+    private Tracker tracker;
 
     //Parameters of the gameplay
     private int coinsToCollect;
@@ -165,6 +166,9 @@ public class Board extends JTable implements Runnable {
 
         //Create some randomly spread coins on game board
         generateCoins(coinsToCollect);
+
+        //Tracker have to be initialized after maze generation and before potential clients
+        this.tracker = new Tracker(this);
 
         //creates new player
         this.player = new Player(this, 0,0);
@@ -857,5 +861,9 @@ public class Board extends JTable implements Runnable {
 
     public int getPacManY() {
         return this.player.getYPos();
+    }
+
+    public Tracker getTracker() {
+        return tracker;
     }
 }
