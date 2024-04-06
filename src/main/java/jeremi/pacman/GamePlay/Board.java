@@ -33,12 +33,11 @@ public class Board extends JTable implements Runnable {
     //It is used after player loosing life point
     private int PAUSE_INTERVAL = 1_000; //ms
 
-
     //Number of squares in a column / row
     //Board is a square itself so the sum of all cells os boardSize^2
     private final int boardSize;
 
-    //Dimensions of a signle cell, cell is a square so height = width
+    //Dimensions of a single cell, cell is a square so height = width
     private static int CELL_SIZE;
 
     //Enum to make code look better
@@ -150,14 +149,22 @@ public class Board extends JTable implements Runnable {
         //--Creating staticFigData table before dynamic one
         this.staticFigData = new BoardFigure[boardSize][boardSize];
 
+        //--Creating dynamicFigData table
+        this.dynamicFigData = new BoardFigure[boardSize][boardSize];
+
+        //--Initially fill everything with empty space
+        for (int row = 0; row < boardSize; row++){
+            for (int col = 0; col < boardSize; col++){
+                this.staticFigData[row][col] = new Space(col,row);
+                this.dynamicFigData[row][col] = new Space(col,row);
+            }
+        }
+
         //Create box pattern for 10x10 board or a random one for greater ones
         generateMaze();
 
         //Create some randomly spread coins on game board
         generateCoins(coinsToCollect);
-
-        //--Creating dynamicFigData table
-        this.dynamicFigData = new BoardFigure[boardSize][boardSize];
 
         //creates new player
         this.player = new Player(this, 0,0);
@@ -271,7 +278,6 @@ public class Board extends JTable implements Runnable {
         }else{
             generateRandomMaze();
         }
-
     }
 
     private void generateRandomMaze(){
@@ -283,7 +289,6 @@ public class Board extends JTable implements Runnable {
             for (int col = 2; col < boardSize - 2; col++){
 
                 staticFigData[row][col] = new Box(col,row);
-
             }
         }
 
@@ -291,8 +296,8 @@ public class Board extends JTable implements Runnable {
         int frequency = 7;
         for (int row = frequency; row < boardSize; row+=frequency){
             for (int col = 0; col < boardSize; col++){
-                staticFigData[row][col] = null;
-                staticFigData[col][row] = null;
+                staticFigData[row][col] = new Space(col,row);
+                staticFigData[col][row] = new Space(col, row);
             }
         }
 
@@ -349,13 +354,13 @@ public class Board extends JTable implements Runnable {
 
             //If rotate is true then we carve the path vertically
             if (rotate % 2 == 1){
-                staticFigData[swerve][tier] = null;
+                staticFigData[swerve][tier] = new Space(swerve,tier);
                 System.out.println("Row : "+swerve + " Col : " + tier);
 
             }
             //Else if rotate is false we carve path horizontally
             else {
-                staticFigData[tier][swerve]  = null;
+                staticFigData[tier][swerve]  = new Space(tier,swerve);;
                 System.out.println("Row : "+tier + " Col : " + swerve);
             }
         }
@@ -388,7 +393,7 @@ public class Board extends JTable implements Runnable {
 
             for (int x = 0; x < boardSize; x++){
 
-                if (staticFigData[y][x] == null){
+                if (staticFigData[y][x] instanceof Space){
                     int[] tmp = {y,x};
                     freeSpaces.add(tmp);
                 }
@@ -445,9 +450,9 @@ public class Board extends JTable implements Runnable {
             int previousY = player.getYPos();
             int previousX = player.getXPos();
 
-            dynamicFigData[previousY][previousX] = null;
+            dynamicFigData[previousY][previousX] = new Space(previousX,previousY);
 
-            //Visualisation firstly paint dynamic layer - to null
+            //Visualisation firstly paint dynamic layer as Space
             //because character presumably has changed his position
             //afterwards paint static layer for example hovered coin
             //player collects coin but adding drawBoardFigure(STATIC) may help me spot some bugs
@@ -507,7 +512,7 @@ public class Board extends JTable implements Runnable {
         PowerUp collectedPowerUp = (PowerUp) staticFigData[powerUpY][powerUpX];
 
         //Removes power up from logic data table
-        staticFigData[powerUpY][powerUpX] = null;
+        staticFigData[powerUpY][powerUpX] = new Space(powerUpY,powerUpX);
 
         //Set power
         collectedPowerUp.rollPower(player);
@@ -527,9 +532,9 @@ public class Board extends JTable implements Runnable {
             int previousY = ghost.getYPos();
             int previousX = ghost.getXPos();
 
-            dynamicFigData[previousY][ghost.getXPos()] = null;
+            dynamicFigData[previousY][ghost.getXPos()] = new Space(previousX,previousY);
 
-            //Visualisation firstly paint dynamic layer - to null
+            //Visualisation firstly paint dynamic layer as Space
             //because character presumably has changed his position
             //afterwards paint static layer for example hovered coin
             drawBoardFigure(previousY,previousX,FigureType.DYNAMIC);
@@ -614,7 +619,7 @@ public class Board extends JTable implements Runnable {
         player.playerAnimator.setState(Player.PlayerAnimator.State.ACTION);
 
         //Removes coin from logic data table
-        staticFigData[coinY][coinX] = null;
+        staticFigData[coinY][coinX] = new Space(coinX,coinY);
 
         //Increment amount of coins collected on this level
         this.coinsCollected++;
@@ -670,7 +675,7 @@ public class Board extends JTable implements Runnable {
     private void resetCharacterPosition(Character character){
 
         //Clearing previous square in logic figures data
-        dynamicFigData[character.getYPos()][character.getXPos()] = null;
+        dynamicFigData[character.getYPos()][character.getXPos()] = new Space(character.getXPos(),character.getYPos());
 
         //Getting character starter coordinates
         int newX = character.getStartLocationX();
@@ -713,27 +718,21 @@ public class Board extends JTable implements Runnable {
     public void drawWholeBoard(){
 
         //Iterates through every row and column
-        //to repaint every figure at it's coordinates represented
-        //index in data table
+        //to repaint every figure
 
         for (int row = 0; row < boardSize; row++){
             for (int e = 0; e < boardSize; e++){
 
                 //displaying static figures
                 drawBoardFigure(row,e,FigureType.STATIC);
+                //rescale
+                staticFigData[row][e].setScalar(CELL_SIZE);
 
-                if (staticFigData[row][e] != null){
-                    //rescale
-                    staticFigData[row][e].setScalar(CELL_SIZE);
-                }
 
                 //displaying dynamic figures
-                if (dynamicFigData[row][e] != null ){
-                    drawBoardFigure(row,e,FigureType.DYNAMIC);
-
-                    //Rescale
-                    dynamicFigData[row][e].setScalar(CELL_SIZE);
-                }
+                drawBoardFigure(row,e,FigureType.DYNAMIC);
+                //Rescale
+                dynamicFigData[row][e].setScalar(CELL_SIZE);
 
             }
         }
@@ -742,27 +741,25 @@ public class Board extends JTable implements Runnable {
 
     public void drawBoardFigure(int y, int x, FigureType type){
 
+
         //Setting image icon to null as default
-        ImageIcon image = null;
+        ImageIcon image;
 
         //Firstly paint static content
         if (type == FigureType.STATIC){
 
-            if (staticFigData[y][x] != null){
-                image = staticFigData[y][x].getImage();
-            }
+            image = staticFigData[y][x].getImage();
 
             this.setValueAt(image, y, x);
 
         //Secondly paint dynamic content
         } else if (type == FigureType.DYNAMIC){
 
+            image = dynamicFigData[y][x].getImage();
 
-            if (dynamicFigData[y][x] != null){
-                image = dynamicFigData[y][x].getImage();
-            }
-
-            this.setValueAt(image, y, x);
+            //do not paint space as dynamic figures
+            if (image != null)
+                this.setValueAt(image, y, x);
         }
 
     }
@@ -775,7 +772,7 @@ public class Board extends JTable implements Runnable {
 
                 if (staticFigData[row][e] instanceof PowerUp){
 
-                    staticFigData[row][e] = null;
+                    staticFigData[row][e] = new Space(e,row);
                 }
 
             }
@@ -808,12 +805,7 @@ public class Board extends JTable implements Runnable {
             @Override
             public void mouseEntered(MouseEvent e) {
 
-//                for (BoardFigure[] row : dynamicFigData){
-//                    for (BoardFigure fig : row){
-//                        System.out.print((fig == null) ? "none " : fig.toString() + " ");
-//                    }
-//                    System.out.print("\n");
-//                }
+
 
             }
 
@@ -823,7 +815,6 @@ public class Board extends JTable implements Runnable {
             }
         });
     }
-
 
     private void gameOver(){
 

@@ -26,7 +26,7 @@ public class Player extends Character {
     private int GO_Y = 0, GO_X = 0;
 
     //Default movement speed
-    private final int defaultSpeed = 104;
+    private final int defaultSpeed = 80;
 
     public Player(Board board, int xPos, int yPos) {
 

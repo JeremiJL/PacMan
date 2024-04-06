@@ -79,7 +79,6 @@ public class Clyde extends Ghost {
             board.moveGhost(this,newX,newY);
 
         }else {
-            System.out.println("CLYDE - MOVEMENT NOT ACTIVE");
             currentMovementSpeed = defaultMovementSpeed;
             setMTI(currentMovementSpeed);
         }

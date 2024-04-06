@@ -101,10 +101,7 @@ public class Pinky extends Ghost {
 
         for (BoardFigure[] row : this.board.getStaticFigData()){
             for (BoardFigure fig : row){
-                if (fig == null)
-                    System.out.print("null ");
-                else
-                    System.out.print("elem ");
+                System.out.print(fig.getClass().getName());
             }
             System.out.print("\n");
         }

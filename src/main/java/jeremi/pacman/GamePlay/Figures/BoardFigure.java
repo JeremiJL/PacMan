@@ -52,6 +52,9 @@ public abstract class BoardFigure {
     }
 
     private ImageIcon scaleImage(ImageIcon imageToScale){
-        return new ImageIcon(imageToScale.getImage().getScaledInstance(this.scalar,this.scalar, Image.SCALE_DEFAULT));
+        if (imageToScale != null)
+            return new ImageIcon(imageToScale.getImage().getScaledInstance(this.scalar,this.scalar, Image.SCALE_DEFAULT));
+        else
+            return null;
     }
 }

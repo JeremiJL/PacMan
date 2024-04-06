@@ -10,6 +10,4 @@ public abstract class Inanimate extends BoardFigure {
         super(xPos, yPos, image);
     }
 
-
-
 }
