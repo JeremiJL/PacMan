@@ -17,7 +17,7 @@ import java.util.ArrayList;
 
 public class Board extends JTable implements Runnable {
 
-    //Threads
+    //Threads responsible for animation and movement of ghosts
     Thread gameThread;
     Thread playerThread;
     Thread pinkyThread;
@@ -317,6 +317,9 @@ public class Board extends JTable implements Runnable {
         carvePath(0, 1);
         //vertically for the 3rd time
         carvePath(boardSize, 1);
+
+        // Update tracker to work on new maze
+        this.tracker = new Tracker(this);
 
     }
 

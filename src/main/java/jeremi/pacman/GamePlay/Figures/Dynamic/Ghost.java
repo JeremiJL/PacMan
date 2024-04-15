@@ -1,10 +1,17 @@
 package jeremi.pacman.GamePlay.Figures.Dynamic;
 
 import jeremi.pacman.GamePlay.Board;
+import jeremi.pacman.GamePlay.Tracker;
 
 import javax.swing.*;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public abstract class Ghost extends Character{
+
+    //Movement
+    //Next sequence of moves
+    Queue<Tracker.Square> trail;
 
     public Ghost(Board board, int xPos, int yPos, ImageIcon image) {
 

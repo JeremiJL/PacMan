@@ -18,23 +18,23 @@ public class Pinky extends Ghost {
     public PinkyAnimator pinkyAnimator;
     private Thread animationThread;
 
-    //Enables / disables ghosts movement
-    private boolean movementActive;
+    //Movement
+    private MotionThread pinkyMotion;
 
     // Movement speed
     private final int movementSpeed = 170;
 
-    //Movement
-    private final PinkyTracking pinkyTracking;
-
-    //Next sequence of moves
-    private Queue<Square> trail = new LinkedList<>();
+    // Regeneration between consecutive hunts
+    private int regeneration = 500; //Pinky does not rest
 
     public Pinky(Board board, int xPos, int yPos) {
         super(board, xPos, yPos,DEFAULT_IMAGE);
 
         //As default
         this.movementActive = false;
+
+        //Initialize trail
+        this.trail = new LinkedList<>();
 
         //Set movement speed of pinky
         setMTI(movementSpeed);
@@ -47,8 +47,8 @@ public class Pinky extends Ghost {
         this.animationThread.start();
 
         //Start tracking thread
-        this.pinkyTracking = new PinkyTracking();
-        this.pinkyTracking.start();
+        this.pinkyMotion = new MotionThread(this,board.getTracker(),this.regeneration);
+        this.pinkyMotion.start();
     }
 
     public void setMovementActive(boolean movementActive) {
@@ -58,44 +58,9 @@ public class Pinky extends Ghost {
 
     //Moving along tracking algorithm
     protected void move(){
-
-        if(movementActive){
-
-            if (!trail.isEmpty()){
-                Square square = trail.poll();
-                System.out.println(square);
-                int newX = square.x;
-                int newY = square.y;
-
-                board.moveGhost(this,newX,newY);
-            }
-        }
+        this.pinkyMotion.move();
     }
 
-    class PinkyTracking extends Thread{
-
-        @Override
-        public void run() {
-            while(true) {
-                try {
-
-                    // Compute next moves if pinky can move
-                    if (movementActive && trail.isEmpty()){
-                        trail = Tracker.convertStackToQueue(board.getTracker().sniff(getXPos(), getYPos(), board.getPacManX(), board.getPacManY()));
-                    }
-                    // If pinky can not move clear the trail
-                    else {
-                        trail.clear();
-                    }
-
-                    Thread.sleep(2_500);
-
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }
-    }
 
     @Override
     public String toString() {

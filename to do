@@ -1,0 +1,4 @@
+-redraw characters in synchronous way, currently its a mess
+-generalize ghost animator classes
+- if there is a clear line towards pacman, ghost should choose it and run towards pacman - disobey tracker algorithm
+-db

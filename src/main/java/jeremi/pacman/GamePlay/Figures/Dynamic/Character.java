@@ -19,6 +19,9 @@ public abstract class Character extends BoardFigure implements Runnable{
     //hast to spend on single cell before going to the next one
     private int MOVEMENT_TIME_INTERVAL; //ms
 
+    //Enables / disables ghosts movement
+    boolean movementActive;
+
     public Character(Board board, int xPos, int yPos, ImageIcon image) {
         super(xPos, yPos, image);
 
