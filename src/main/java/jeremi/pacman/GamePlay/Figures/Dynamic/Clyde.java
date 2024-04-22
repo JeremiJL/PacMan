@@ -64,7 +64,75 @@ public class Clyde extends Ghost {
         return "Clyde";
     }
 
+    public class ClydeAnimator implements Runnable {
 
+        //Table contains default animation frames, in case of Ghost it's just looking around and simple animation of 'hovering'
+        protected static ImageIcon[] DEFAULT_FRAMES = new ImageIcon[]{
+                new ImageIcon("Graphics/Ghosts/Clyde/ClydeDefault1.png"),
+                new ImageIcon("Graphics/Ghosts/Clyde/ClydeDefault2.png"),
+                new ImageIcon("Graphics/Ghosts/Clyde/ClydeDefault3.png"),
+                new ImageIcon("Graphics/Ghosts/Clyde/ClydeDefault4.png")
+        };
+
+        private static ImageIcon[] ACTION_FRAMES = null;
+
+        private static ImageIcon[] DEAD_FRAMES = null;
+
+        //Role of this enum is to make code more clear
+        //State corresponds with ImageIcon tables
+        public enum State {
+
+            DEFAULT(DEFAULT_FRAMES);
+
+            public ImageIcon[] framesTab;
+
+            State(ImageIcon[] frames) {
+                this.framesTab = frames;
+            }
+
+        }
+
+        //Actual animation-state of character
+        private ClydeAnimator.State myState;
+
+        //Period that every frame of animation will take, in milliseconds
+        private static int ANIMATION_TIME_INTERVAL = 200; //ms
+
+        public ClydeAnimator() {
+            //Starter animation-state
+            setState(State.DEFAULT);
+        }
+
+        public void setState(State state) {
+            this.myState = state;
+        }
+
+        public void animate(ImageIcon[] frames) {
+
+            //Iterates over the table of Images and displays them in loop
+            for (ImageIcon frame : frames) {
+
+                setImage(frame);
+
+                //Sleeps for the period that frame should take
+                try {
+                    Thread.sleep(ANIMATION_TIME_INTERVAL);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+
+            }
+
+        }
+
+        @Override
+        public void run() {
+
+            //Animation in the loop
+            while (true) {
+                animate(myState.framesTab);
+            }
+        }
     }
 
 }
