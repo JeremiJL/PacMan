@@ -59,7 +59,6 @@ public class MainMenuPanel extends AbstractContentPanel {
         this.buttonScores = new JButton("HIGH SCORES");
         this.buttonScores.setFont(Constants.getFont(Constants.FONT_TYPE.MEDIUM_FONT));
         //As high-scores is still not implemented this button is disabled
-        this.buttonScores.setEnabled(false);
         this.panelAttributes.add(buttonScores);
 
         //Options button
